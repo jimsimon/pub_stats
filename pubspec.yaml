@@ -1,0 +1,10 @@
+name: pub_stats
+description: >
+  A library useful for applications or for sharing on pub.dartlang.org.
+version: 0.0.1
+author: Jim Simon <jim.j.simon@gmail.com>
+#homepage: https://www.example.com
+#dependencies:
+#  lib_name: any
+dev_dependencies:
+  unittest: any
