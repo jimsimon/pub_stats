@@ -4,7 +4,9 @@ description: >
 version: 0.0.1
 author: Jim Simon <jim.j.simon@gmail.com>
 #homepage: https://www.example.com
-#dependencies:
-#  lib_name: any
+dependencies:
+  polymer: any
 dev_dependencies:
   unittest: any
+transformers:
+- polymer
