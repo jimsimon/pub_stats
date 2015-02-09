@@ -1,5 +1,5 @@
-<!-- import polymer-element's definition -->
-<link rel="import" href="../packages/polymer/polymer.html">
+<link rel="import" href="../../packages/polymer/polymer.html">
+<link rel="import" href="../../packages/core_elements/core_ajax_dart.html">
 
 <polymer-element name="pubstats-package-list">
   <template>
@@ -8,7 +8,14 @@
         display: block;
       }
     </style>
-    <!-- Template content here -->
+    <core-ajax-dart auto
+            url="http://localhost:8081/api/packages"
+            handleAs="json"
+            response="{{packages}}"></core-ajax-dart>
+
+    <template repeat="{{package in packages}}">
+      <a href="http://localhost:8081/api/packages/{{package}}">{{package}}</a>
+    </template>
   </template>
   <script type="application/dart" src="pubstats_package_list.dart"></script>
 </polymer-element>

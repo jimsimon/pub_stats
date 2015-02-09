@@ -7,6 +7,8 @@ import 'package:polymer/polymer.dart';
 
 class PubstatsPackageList extends PolymerElement {
 
+  @observable var packages;
+
   /// Constructor used to create instance of PubstatsPackageList.
   PubstatsPackageList.created() : super.created() {
   }
