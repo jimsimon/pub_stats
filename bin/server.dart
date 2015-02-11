@@ -15,7 +15,7 @@ main() async {
 
   await refreshStats();
 
-  var staticHandler = createStaticHandler("../build/webgi", defaultDocument: "index.html");
+  var staticHandler = createStaticHandler("build", defaultDocument: "index.html");
 
   var myRouter = router()
     ..get("/api", (_) => new Response.ok("Hello from API"))
@@ -37,7 +37,7 @@ main() async {
   .addMiddleware(logRequests())
   .addHandler(cascade.handler);
 
-  io.serve(handler, 'localhost', 8081);
+  io.serve(handler, '0.0.0.0', 8080);
 }
 
 refreshStats() async {
