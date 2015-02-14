@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<link rel="import" href="../../packages/polymer/polymer.html">
+<link rel="import" href="../../packages/core_elements/core_ajax_dart.html">
+
+<polymer-element name="pubstats-package" attributes="name">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <core-ajax-dart auto
+                        url="/api/packages/{{name}}"
+                        handleAs="json"
+                        response="{{package}}"></core-ajax-dart>
+
+        {{package | toJSON}}
+    </template>
+    <script type="application/dart" src="pubstats_package.dart"></script>
+</polymer-element>

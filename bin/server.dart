@@ -14,13 +14,17 @@ var analysisResult;
 main() async {
   await refreshStats();
 
-  var staticHandler = createStaticHandler("build", defaultDocument: "index.html");
+  String staticPath = "../build/web";
+  if (!new Directory(staticPath).existsSync()) {
+    staticPath = "build";
+  }
+  var staticHandler = createStaticHandler(staticPath, defaultDocument: "index.html");
 
   var myRouter = router()
     ..get("/api", (_) => new Response.ok("Hello from API"))
-    ..get("/api/packages", (request) => new Response.ok(JSON.encode(analysisResult["reverseDependencyMap"].keys.toList()), headers: headers))
+    ..get("/api/packages", (request) => new Response.ok(JSON.encode(analysisResult["packageMap"].keys.toList()), headers: headers))
     ..get("/api/packages/{package}", (request) {
-      var report = analysisResult["reverseDependencyMap"][getPathParameter(request, "package")];
+      var report = analysisResult["packageMap"][getPathParameter(request, "package")];
       if (report != null) {
         return new Response.ok(JSON.encode(report), headers: headers);
       } else {
@@ -76,7 +80,7 @@ class PubClient {
     return packages;
   }
 
-  getPageOfPackages(pageNumber) async {
+  Future<Map> getPageOfPackages(pageNumber) async {
     var url = "$baseApiUrl/packages?page=$pageNumber";
     print("Requesting data from $url");
     Completer completer = new Completer();
@@ -91,7 +95,7 @@ class PubClient {
 
 class PackageAnalyzer {
   List _packages = [];
-  var _reverseDependencyMap = {};
+  var packageMap = {};
 
   PackageAnalyzer(List this._packages);
 
@@ -100,29 +104,34 @@ class PackageAnalyzer {
     _packages.forEach((package) {
       var name = package["name"];
 
+      packageMap.putIfAbsent(name, () => {});
+      packageMap[name]["package"] = package;
+      packageMap[name].putIfAbsent("dependents", () => []);
+      packageMap[name].putIfAbsent("dev_dependents", () => []);
+
       var pubspec = package["latest"]["pubspec"];
       Map dependencies = pubspec["dependencies"];
       if (dependencies != null) {
         dependencies.forEach((key, value) {
-          _reverseDependencyMap.putIfAbsent(key, () => {});
-          _reverseDependencyMap[key].putIfAbsent("dependents", () => []);
-          _reverseDependencyMap[key]["dependents"].add(name);
+          packageMap.putIfAbsent(key, () => {});
+          packageMap[key].putIfAbsent("dependents", () => []);
+          packageMap[key]["dependents"].add(name);
         });
       }
 
       var devDependencies = pubspec["dev_dependencies"];
       if (devDependencies != null) {
         devDependencies.forEach((key, value) {
-          _reverseDependencyMap.putIfAbsent(key, () => {});
-          _reverseDependencyMap[key].putIfAbsent("dev_dependents", () => []);
-          _reverseDependencyMap[key]["dev_dependents"].add(name);
+          packageMap.putIfAbsent(key, () => {});
+          packageMap[key].putIfAbsent("dev_dependents", () => []);
+          packageMap[key]["dev_dependents"].add(name);
         });
       }
     });
     print("Anaylsis complete");
-
+    
     return {
-      "reverseDependencyMap": _reverseDependencyMap
+      "packageMap": packageMap
     };
   }
 }

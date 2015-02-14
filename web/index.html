@@ -1,9 +1,17 @@
+<!DOCTYPE html>
 <html>
     <head>
+        <link rel="import" href="packages/app_router/app_router.html">
+        <link rel="import" href="packages/app_router/app_route.html">
         <link rel="import" href="elements/pubstats-package-list/pubstats_package_list.html">
+        <link rel="import" href="elements/pubstats-package/pubstats_package.html">
     </head>
-    <body>
-        <pubstats-package-list></pubstats-package-list>
+    <body unresolved>
+        <app-router>
+            <app-route path="/" redirect="/packages"></app-route>
+            <app-route path="/packages" elem="pubstats-package-list"></app-route>
+            <app-route path="/packages/:name" elem="pubstats-package"></app-route>
+        </app-router>
         <script type="application/dart">export 'package:polymer/init.dart';</script>
     </body>
 </html>

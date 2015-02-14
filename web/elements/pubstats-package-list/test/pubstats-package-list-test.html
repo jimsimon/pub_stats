@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="import" href="../pubstats-package-list-item.html">
         <script type="application/dart">
             import 'package:unittest/unittest.dart';
             import 'dart:html';
@@ -9,14 +8,13 @@
 
             main() {
                 initPolymer();
-                test("renders with the correct data", (){
-                    var psPackages = document.querySelector("pubstats-package-list-item");
-                    expect(psPackages.shadowRoot.innerHtml, equals("package name - 05/17/2014 (3)"));
-                });
+//                test("renders with the correct data", (){
+//                    var psPackages = document.querySelector("pubstats-package-list-item");
+//                    expect(psPackages.shadowRoot.innerHtml, equals("package name - 05/17/2014 (3)"));
+//                });
             }
         </script>
     </head>
     <body>
-        <pubstats-package-list-item name="package name" lastUpdated="05/17/2014" references="3"></pubstats-package-list-item>
     </body>
 </html>
