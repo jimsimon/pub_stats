@@ -11,15 +11,17 @@
       }
     </style>
     <core-ajax-dart auto
-            url="/api/packages"
+            url="http://localhost:8080/api/packages"
             handleAs="json"
             response="{{packages}}"></core-ajax-dart>
-
-    <ul>
-        <template repeat="{{package in packages}}">
-          <li><a href="/#/packages/{{package}}">{{package}}</a></li>
-        </template>
-    </ul>
+    <template if="{{packages}}">
+        <h1>Package Directory</h1>
+        <ul>
+            <template repeat="{{package in packages}}">
+              <li><a _href="#/packages/{{package}}">{{package}}</a></li>
+            </template>
+        </ul>
+    </template>
   </template>
   <script type="application/dart" src="pubstats_package_list.dart"></script>
 </polymer-element>

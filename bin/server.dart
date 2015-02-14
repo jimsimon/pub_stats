@@ -22,10 +22,12 @@ main() async {
 
   var myRouter = router()
     ..get("/api", (_) => new Response.ok("Hello from API"))
-    ..get("/api/packages", (request) => new Response.ok(JSON.encode(analysisResult["packageMap"].keys.toList()), headers: headers))
+    ..get("/api/packages", (request) => new Response.ok(JSON.encode(analysisResult["packageMap"].keys.toList()..sort()), headers: headers))
     ..get("/api/packages/{package}", (request) {
       var report = analysisResult["packageMap"][getPathParameter(request, "package")];
       if (report != null) {
+        report["dependents"].sort();
+        report["dev_dependents"].sort();
         return new Response.ok(JSON.encode(report), headers: headers);
       } else {
         return new Response.notFound("Package not found");
