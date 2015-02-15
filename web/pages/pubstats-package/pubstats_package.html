@@ -8,7 +8,7 @@
         <style>
             :host {
                 display: block;
-                width: 980px;
+                max-width: 980px;
                 margin: 0 auto;
             }
 
@@ -68,6 +68,21 @@
             li {
                 list-style: none;
             }
+
+            button {
+                margin: 0 auto 10px;
+                width: 100px;
+                display: block;
+                height: 40px;
+            }
+
+            h4 {
+                margin-bottom: 0px;
+            }
+
+            p {
+                margin-top: 0px;
+            }
         </style>
         <core-ajax-dart auto
                         url="http://localhost:8080/api/packages/{{name}}"
@@ -90,6 +105,8 @@
                     <p>{{package['package']['latest']['pubspec']['description']}}</p>
                 </section>
                 <section>
+                    <h4>Pub Page</h4>
+                    <p><a _href="https://pub.dartlang.org/packages/{{package['package']['name']}}" target="_blank">https://pub.dartlang.org/packages/{{package['package']['name']}}</a></p>
                     <h4>Homepage</h4>
                     <p><a _href="{{package['package']['latest']['pubspec']['homepage']}}" target="_blank">{{package['package']['latest']['pubspec']['homepage']}}</a></p>
                     <h4>Documentation</h4>
@@ -106,10 +123,10 @@
                         <template repeat="{{dependency in package['package']['latest']['pubspec']['dependencies'].keys | sortIterable | take(10)}}">
                             <li><a _href="#/packages/{{dependency}}">{{dependency}}</a></li>
                         </template>
-                        <template if="{{package['package']['latest']['pubspec']['dependencies'].length > 10}}">
-                            <span>Show all...</span>
-                        </template>
                     </ul>
+                    <template if="{{package['package']['latest']['pubspec']['dependencies'].length > 10}}">
+                        <button>Show all...</button>
+                    </template>
                 </section>
                 <section>
                     <h2>{{package['package']['latest']['pubspec'] | count("dev_dependencies")}} Development Dependencies</h2>
@@ -117,10 +134,10 @@
                         <template repeat="{{dev_dependency in package['package']['latest']['pubspec']['dev_dependencies'].keys | sortIterable | take(10)}}">
                             <li><a _href="#/packages/{{dev_dependency}}">{{dev_dependency}}</a></li>
                         </template>
-                        <template if="{{package['package']['latest']['pubspec']['dev_dependencies'].length > 10}}">
-                            <span>Show all...</span>
-                        </template>
                     </ul>
+                    <template if="{{package['package']['latest']['pubspec']['dev_dependencies'].length > 10}}">
+                        <button>Show all...</button>
+                    </template>
                 </section>
                 <section>
                     <h2>{{package['dependents'].length}} Runtime Dependents</h2>
@@ -128,22 +145,21 @@
                         <template repeat="{{dependent in package['dependents'] | take(10)}}">
                             <li><a _href="#/packages/{{dependent}}">{{dependent}}</a></li>
                         </template>
-                        <template if="{{package['dependents'].length > 10}}">
-                            <span>Show all...</span>
-                        </template>
                     </ul>
+                    <template if="{{package['dependents'].length > 10}}">
+                        <button>Show all...</button>
+                    </template>
                 </section>
-
                 <section>
                     <h2>{{package['dev_dependents'].length}} Development Dependents</h2>
                     <ul>
                         <template repeat="{{dev_dependent in package['dev_dependents'] | take(10)}}">
                             <li><a _href="#/packages/{{dev_dependent}}">{{dev_dependent}}</a></li>
                         </template>
-                        <template if="{{package['dev_dependents'].length > 10}}">
-                            <span>Show all...</span>
-                        </template>
                     </ul>
+                    <template if="{{package['dev_dependents'].length > 10}}">
+                        <button>Show all...</button>
+                    </template>
                 </section>
             </div>
         </template>
