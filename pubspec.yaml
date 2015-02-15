@@ -10,6 +10,7 @@ dependencies:
   shelf_static: any
   core_elements: ">=0.6.0+4 <0.7.0"
   app_router: ">=0.1.1 <0.2.0"
+  managed_mongo: ">=1.1.0 <2.0.0"
 dev_dependencies:
   unittest: any
 transformers:

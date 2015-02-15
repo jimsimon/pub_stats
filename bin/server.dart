@@ -5,13 +5,19 @@ import "package:shelf_static/shelf_static.dart";
 import "package:shelf/shelf.dart";
 import "package:shelf/shelf_io.dart" as io;
 import "package:shelf_route/shelf_route.dart";
+import "package:managed_mongo/managed_mongo.dart";
 
 const Map headers = const {HttpHeaders.CONTENT_TYPE: 'application/json', "Access-Control-Allow-Origin": "*"};
 final PubClient pubClient = new PubClient.forUrl("https://pub.dartlang.org/api");
 
+MongoDB mongodb;
 var analysisResult;
 
 main() async {
+  var downloadUrl = "https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.6.5.tgz";
+  mongodb = new MongoDB(downloadUrl, workFolder: "mongo");
+  await mongodb.start();
+
   await refreshStats();
 
   String staticPath = "../build/web";
@@ -50,6 +56,10 @@ refreshStats() async {
   PackageAnalyzer packageAnalyzer = new PackageAnalyzer(packages);
   analysisResult = packageAnalyzer.runAnalysis();
   new Future.delayed(const Duration(hours: 24), refreshStats);
+}
+
+savePackages() async {
+
 }
 
 class PubClient {
