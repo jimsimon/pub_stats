@@ -97,30 +97,33 @@
                 </section>
             </div>
             <div>
+                <section>Charts will eventually go here...</section>
+            </div>
+            <div>
                 <section>
-                    <h2>Runtime Dependencies</h2>
+                    <h2>{{package['package']['latest']['pubspec'] | count("dependencies")}} Runtime Dependencies</h2>
                     <ul>
                         <template repeat="{{dependency in package['package']['latest']['pubspec']['dependencies'].keys | sortIterable | take(10)}}">
                             <li><a _href="#/packages/{{dependency}}">{{dependency}}</a></li>
                         </template>
-                        <template if="{{package['package']['latest']['pubspec']['dependencies'].keys.length > 10}}">
+                        <template if="{{package['package']['latest']['pubspec']['dependencies'].length > 10}}">
                             <span>Show all...</span>
                         </template>
                     </ul>
                 </section>
                 <section>
-                    <h2>Development Dependencies</h2>
+                    <h2>{{package['package']['latest']['pubspec'] | count("dev_dependencies")}} Development Dependencies</h2>
                     <ul>
                         <template repeat="{{dev_dependency in package['package']['latest']['pubspec']['dev_dependencies'].keys | sortIterable | take(10)}}">
                             <li><a _href="#/packages/{{dev_dependency}}">{{dev_dependency}}</a></li>
                         </template>
-                        <template if="{{package['package']['latest']['pubspec']['dev_dependencies'].keys.length > 10}}">
+                        <template if="{{package['package']['latest']['pubspec']['dev_dependencies'].length > 10}}">
                             <span>Show all...</span>
                         </template>
                     </ul>
                 </section>
                 <section>
-                    <h2>Runtime Dependents</h2>
+                    <h2>{{package['dependents'].length}} Runtime Dependents</h2>
                     <ul>
                         <template repeat="{{dependent in package['dependents'] | take(10)}}">
                             <li><a _href="#/packages/{{dependent}}">{{dependent}}</a></li>
@@ -132,7 +135,7 @@
                 </section>
 
                 <section>
-                    <h2>Development Dependents</h2>
+                    <h2>{{package['dev_dependents'].length}} Development Dependents</h2>
                     <ul>
                         <template repeat="{{dev_dependent in package['dev_dependents'] | take(10)}}">
                             <li><a _href="#/packages/{{dev_dependent}}">{{dev_dependent}}</a></li>

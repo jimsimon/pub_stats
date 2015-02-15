@@ -17,4 +17,6 @@ class PubstatsPackage extends PolymerElement {
   sortIterable(iterable) => iterable.toList()..sort();
 
   take(number) => (list) => list.take(number);
+
+  count(key) => (map) => map.containsKey(key) ? map[key].length : 0;
 }
