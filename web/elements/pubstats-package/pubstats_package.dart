@@ -14,7 +14,7 @@ class PubstatsPackage extends PolymerElement {
   PubstatsPackage.created() : super.created() {
   }
 
-  sortIterable(iterable) {
-    return iterable.toList()..sort();
-  }
+  sortIterable(iterable) => iterable.toList()..sort();
+
+  take(number) => (list) => list.take(number);
 }

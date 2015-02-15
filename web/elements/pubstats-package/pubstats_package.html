@@ -8,7 +8,7 @@
         <style>
             :host {
                 display: block;
-                width: 75%;
+                width: 980px;
                 margin: 0 auto;
             }
 
@@ -17,6 +17,57 @@
                 flex-direction: row;
                 justify-content: space-between;
             }
+
+            div:first-of-type {
+                padding-top: 60px;
+            }
+
+            section, h1 {
+                border-radius: 4px;
+                margin: 10px;
+                padding: 0 10px;
+            }
+
+            section {
+                background-color: #f5f5f5;
+                border: 1px solid rgba(0, 0, 0, 0.15);
+                width: 100%;
+            }
+
+            h2 {
+                text-align: center;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+                margin: 0;
+                padding: 10px 0;
+            }
+
+            header {
+                background-color: #2c2c2c;
+                min-height: 40px;
+                position: fixed;
+                right: 0;
+                left: 0;
+                z-index: 1030;
+                margin-bottom: 0;
+                top: 0;
+            }
+
+            a {
+                color: #0088cc;
+                text-decoration: none;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: block;
+                white-space: nowrap;
+            }
+
+            ul {
+                padding-left: 10px;
+            }
+
+            li {
+                list-style: none;
+            }
         </style>
         <core-ajax-dart auto
                         url="http://localhost:8080/api/packages/{{name}}"
@@ -24,11 +75,17 @@
                         response="{{package}}"></core-ajax-dart>
 
         <template if="{{package}}">
-            <a href="#/packages">Back</a>
+            <div>
+                <header>
+                    <nav>
+                        <a href="#/packages">Package List</a>
+                    </nav>
+                </header>
+            </div>
 
+            <h1>{{package['package']['name']}} ({{package['package']['latest']['version']}})</h1>
             <div>
                 <section>
-                    <h1>{{package['package']['name']}} ({{package['package']['latest']['version']}})</h1>
                     <h4>Description</h4>
                     <p>{{package['package']['latest']['pubspec']['description']}}</p>
                 </section>
@@ -41,35 +98,47 @@
             </div>
             <div>
                 <section>
-                    <h2>Dependencies</h2>
+                    <h2>Runtime Dependencies</h2>
                     <ul>
-                        <template repeat="{{dependency in package['package']['latest']['pubspec']['dependencies'].keys | sortIterable}}">
+                        <template repeat="{{dependency in package['package']['latest']['pubspec']['dependencies'].keys | sortIterable | take(10)}}">
                             <li><a _href="#/packages/{{dependency}}">{{dependency}}</a></li>
                         </template>
-                    </ul>
-                </section>
-                <section>
-                    <h2>Dev Dependencies</h2>
-                    <ul>
-                        <template repeat="{{dev_dependency in package['package']['latest']['pubspec']['dev_dependencies'].keys | sortIterable}}">
-                            <li><a _href="#/packages/{{dev_dependency}}">{{dev_dependency}}</a></li>
+                        <template if="{{package['package']['latest']['pubspec']['dependencies'].keys.length > 10}}">
+                            <span>Show all...</span>
                         </template>
                     </ul>
                 </section>
                 <section>
-                    <h2>Dependent Packages</h2>
+                    <h2>Development Dependencies</h2>
                     <ul>
-                        <template repeat="{{dependent in package['dependents']}}">
+                        <template repeat="{{dev_dependency in package['package']['latest']['pubspec']['dev_dependencies'].keys | sortIterable | take(10)}}">
+                            <li><a _href="#/packages/{{dev_dependency}}">{{dev_dependency}}</a></li>
+                        </template>
+                        <template if="{{package['package']['latest']['pubspec']['dev_dependencies'].keys.length > 10}}">
+                            <span>Show all...</span>
+                        </template>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Runtime Dependents</h2>
+                    <ul>
+                        <template repeat="{{dependent in package['dependents'] | take(10)}}">
                             <li><a _href="#/packages/{{dependent}}">{{dependent}}</a></li>
+                        </template>
+                        <template if="{{package['dependents'].length > 10}}">
+                            <span>Show all...</span>
                         </template>
                     </ul>
                 </section>
 
                 <section>
-                    <h2>Dev Dependent Packages</h2>
+                    <h2>Development Dependents</h2>
                     <ul>
-                        <template repeat="{{dev_dependent in package['dev_dependents']}}">
+                        <template repeat="{{dev_dependent in package['dev_dependents'] | take(10)}}">
                             <li><a _href="#/packages/{{dev_dependent}}">{{dev_dependent}}</a></li>
+                        </template>
+                        <template if="{{package['dev_dependents'].length > 10}}">
+                            <span>Show all...</span>
                         </template>
                     </ul>
                 </section>

@@ -7,7 +7,7 @@
         <link rel="import" href="elements/pubstats-package/pubstats_package.html">
     </head>
     <body unresolved>
-        <app-router>
+        <app-router mode="hash">
             <app-route path="/" redirect="/packages"></app-route>
             <app-route path="/packages" elem="pubstats-package-list"></app-route>
             <app-route path="/packages/:name" elem="pubstats-package"></app-route>
