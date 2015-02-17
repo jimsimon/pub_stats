@@ -6,30 +6,33 @@ import "package:shelf/shelf.dart";
 import "package:shelf/shelf_io.dart" as io;
 import "package:shelf_route/shelf_route.dart";
 import "package:managed_mongo/managed_mongo.dart";
+import "package:mongo_dart/mongo_dart.dart";
 
 const Map headers = const {HttpHeaders.CONTENT_TYPE: 'application/json', "Access-Control-Allow-Origin": "*"};
 final PubClient pubClient = new PubClient.forUrl("https://pub.dartlang.org/api");
 
-MongoDB mongodb;
 var analysisResult;
+MongoDB mongodb;
 
 main() async {
-  var downloadUrl = "https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.6.5.tgz";
-  mongodb = new MongoDB(downloadUrl, workFolder: "mongo");
-  await mongodb.start();
+  runZoned(() async {
+    var downloadUrl = "https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.6.5.tgz";
+    mongodb = new MongoDB(downloadUrl, workFolder: "mongo");
+    await mongodb.start();
 
-  await refreshStats();
+    await refreshStats();
 
-  String staticPath = "../build/web";
-  if (!new Directory(staticPath).existsSync()) {
-    staticPath = "build";
-  }
-  var staticHandler = createStaticHandler(staticPath, defaultDocument: "index.html");
+    String staticPath = "../build/web";
+    if (!new Directory(staticPath).existsSync()) {
+      staticPath = "build";
+    }
+    var staticHandler = createStaticHandler(staticPath, defaultDocument: "index.html");
 
-  var myRouter = router()
-    ..get("/api", (_) => new Response.ok("Hello from API"))
-    ..get("/api/packages", (request) => new Response.ok(JSON.encode(analysisResult["packageMap"].keys.toList()..sort()), headers: headers))
-    ..get("/api/packages/{package}", (request) {
+    var myRouter = router()
+      ..get("/api", (_) => new Response.ok("Hello from API"))
+      ..get("/api/packages", (request) => new Response.ok(JSON.encode(analysisResult["packageMap"].keys.toList()
+      ..sort()), headers: headers))
+      ..get("/api/packages/{package}", (request) {
       var report = analysisResult["packageMap"][getPathParameter(request, "package")];
       if (report != null) {
         report["dependents"].sort();
@@ -40,26 +43,35 @@ main() async {
       }
     });
 
-  var cascade = new Cascade()
+    var cascade = new Cascade()
     .add(staticHandler)
     .add(myRouter.handler);
 
-  var handler = const Pipeline()
+    var handler = const Pipeline()
     .addMiddleware(logRequests())
     .addHandler(cascade.handler);
 
-  io.serve(handler, '0.0.0.0', 8080);
+    io.serve(handler, '0.0.0.0', 8080);
+  }, onError: (error) async {
+    if (mongodb != null) {
+      await mongodb.stop();
+    }
+    throw error;
+  });
 }
 
 refreshStats() async {
   var packages = await pubClient.getAllPackages();
+
+  Db db = new Db("mongodb://localhost:27017/pubstats");
+  await db.open();
+  PackageDao packageDao = new PackageDao(db.collection("packages"));
+  PackagePersistence packagePersistence = new PackagePersistence(packageDao);
+  packages = await packagePersistence.savePackages(packages);
+  await db.close();
   PackageAnalyzer packageAnalyzer = new PackageAnalyzer(packages);
   analysisResult = packageAnalyzer.runAnalysis();
   new Future.delayed(const Duration(hours: 24), refreshStats);
-}
-
-savePackages() async {
-
 }
 
 class PubClient {
@@ -103,6 +115,32 @@ class PubClient {
     });
     return completer.future;
   }
+}
+
+class PackagePersistence {
+  final PackageDao packageDao;
+
+  PackagePersistence(PackageDao this.packageDao);
+
+  Future<List> savePackages(List packages) async {
+    await packageDao.insertPackages(packages);
+    return await packageDao.getPackages();
+  }
+}
+
+class PackageDao {
+  final DbCollection collection;
+
+  PackageDao(DbCollection this.collection);
+
+  Future insertPackages(List packages) async {
+    return collection.insertAll(packages);
+  }
+
+  Future<List<Map>> getPackages() async {
+    return collection.find().toList();
+  }
+
 }
 
 class PackageAnalyzer {
