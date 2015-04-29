@@ -1,5 +1,4 @@
 import 'package:polymer/polymer.dart';
-import "dart:convert";
 
 /**
  * A Polymer pubstats-package element.

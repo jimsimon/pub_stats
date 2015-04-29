@@ -120,7 +120,7 @@
                 <section>
                     <h2>{{package['package']['latest']['pubspec'] | count("dependencies")}} Runtime Dependencies</h2>
                     <ul>
-                        <template repeat="{{dependency in package['package']['latest']['pubspec']['dependencies'].keys | sortIterable | take(10)}}">
+                        <template repeat="{{dependency in package['package']['latest']['pubspec']['dependencies'].keys | sortIterable}}">
                             <li><a _href="#/packages/{{dependency}}">{{dependency}}</a></li>
                         </template>
                     </ul>
@@ -131,7 +131,7 @@
                 <section>
                     <h2>{{package['package']['latest']['pubspec'] | count("dev_dependencies")}} Development Dependencies</h2>
                     <ul>
-                        <template repeat="{{dev_dependency in package['package']['latest']['pubspec']['dev_dependencies'].keys | sortIterable | take(10)}}">
+                        <template repeat="{{dev_dependency in package['package']['latest']['pubspec']['dev_dependencies'].keys | sortIterable}}">
                             <li><a _href="#/packages/{{dev_dependency}}">{{dev_dependency}}</a></li>
                         </template>
                     </ul>
@@ -142,7 +142,7 @@
                 <section>
                     <h2>{{package['dependents'].length}} Runtime Dependents</h2>
                     <ul>
-                        <template repeat="{{dependent in package['dependents'] | take(10)}}">
+                        <template repeat="{{dependent in package['dependents']}}">
                             <li><a _href="#/packages/{{dependent}}">{{dependent}}</a></li>
                         </template>
                     </ul>
@@ -153,7 +153,7 @@
                 <section>
                     <h2>{{package['dev_dependents'].length}} Development Dependents</h2>
                     <ul>
-                        <template repeat="{{dev_dependent in package['dev_dependents'] | take(10)}}">
+                        <template repeat="{{dev_dependent in package['dev_dependents']}}">
                             <li><a _href="#/packages/{{dev_dependent}}">{{dev_dependent}}</a></li>
                         </template>
                     </ul>
