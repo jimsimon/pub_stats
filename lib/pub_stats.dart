@@ -42,30 +42,31 @@ class PubStatsServer {
       ..get("/api/packages", (request) => new Response.ok(JSON.encode(analysisResult["packageMap"].keys.toList()
       ..sort()), headers: _HEADERS))
       ..get("/api/packages/{package}", (request) {
-      var report = analysisResult["packageMap"][route.getPathParameter(request, "package")];
-      if (report != null) {
-        report["dependents"].sort();
-        report["dev_dependents"].sort();
-        var json = dartson.encode(report);
-        return new Response.ok(json, headers: _HEADERS);
-      } else {
-        return new Response.notFound("Package not found");
-      }
-    });
+        var report = analysisResult["packageMap"][route.getPathParameter(request, "package")];
+        if (report != null) {
+          report["dependents"].sort();
+          report["dev_dependents"].sort();
+          var json = dartson.encode(report);
+          return new Response.ok(json, headers: _HEADERS);
+        } else {
+          return new Response.notFound("Package not found");
+        }
+      });
     return myRouter;
   }
 
   refreshStats() async {
     stdout.write("refreshing packages...");
     List<Package> packages = await pubClient.getAllPackages();
+//    List<Package> packages = (await pubClient.getPageOfPackages(1)).packages;
     stdout.writeln("done");
 
-    Db db = new Db("mongodb://localhost:27017/pubstats");
-    await db.open();
-    PackageDao packageDao = new PackageDao(dartson, db.collection("packages"));
-    PackagePersistence packagePersistence = new PackagePersistence(packageDao);
-    packages = await packagePersistence.savePackages(packages);
-    await db.close();
+//    Db db = new Db("mongodb://localhost:27017/pubstats");
+//    await db.open();
+//    PackageDao packageDao = new PackageDao(dartson, db.collection("packages"));
+//    PackagePersistence packagePersistence = new PackagePersistence(packageDao);
+//    packages = await packagePersistence.savePackages(packages);
+//    await db.close();
     stdout.write("refreshing stats...");
     PackageAnalyzer packageAnalyzer = new PackageAnalyzer(packages);
     analysisResult = packageAnalyzer.runAnalysis();

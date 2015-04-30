@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<link rel="import" href="../../packages/polymer/polymer.html">
+<link rel="import" href="../../packages/core_elements/core_ajax_dart.html">
+
+<polymer-element name="package-dependency-list" attributes="label dependencies">
+    <template>
+        <section>
+            <h2>{{dependencyCount}} {{label}}</h2>
+            <ul>
+                <template repeat="{{dependency in dependencies | sortIterable}}">
+                    <li><a _href="#/packages/{{dependency}}">{{dependency}}</a></li>
+                </template>
+            </ul>
+            <template if="{{dependencies.length > 10}}">
+                <button>Show all...</button>
+            </template>
+        </section>
+        <style>
+            :host {
+                display: block;
+            }
+
+            h2 {
+                text-align: center;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+                margin: 0;
+                padding: 10px 0;
+            }
+
+            a {
+                color: #0088cc;
+                text-decoration: none;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: block;
+                white-space: nowrap;
+            }
+
+            ul {
+                padding-left: 10px;
+            }
+
+            li {
+                list-style: none;
+            }
+        </style>
+    </template>
+    <script type="application/dart" src="package_dependency_list.dart"></script>
+</polymer-element>

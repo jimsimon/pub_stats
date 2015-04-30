@@ -36,11 +36,12 @@ main() async {
     .addMiddleware(logRequests())
     .addHandler(cascade.handler);
 
-    io.serve(handler, '0.0.0.0', 8080);
+    io.serve(handler, '0.0.0.0', 8081);
   } catch(error) {
     if (mongodb != null) {
       await mongodb.stop();
     }
+    rethrow;
   };
 }
 
